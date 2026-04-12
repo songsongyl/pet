@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.admin.mapper.CooperateOrgMapper">
+
+    <resultMap type="com.ruoyi.admin.domain.CooperateOrg" id="CooperateOrgResult">
+        <result property="orgId"    column="org_id"    />
+        <result property="orgName"    column="org_name"    />
+        <result property="orgType"    column="org_type"    />
+        <result property="licenseNo"    column="license_no"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="address"    column="address"    />
+        <result property="businessScope"    column="business_scope"    />
+        <result property="status"    column="status"    />
+        <result property="auditTime"    column="audit_time"    />
+        <result property="auditUserId"    column="audit_user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectCooperateOrgVo">
+        select org_id, org_name, org_type, license_no, contact_person, contact_phone, address, business_scope, status, audit_time, audit_user_id, create_time, update_time, is_deleted from cooperate_org
+    </sql>
+
+    <select id="selectCooperateOrgList" parameterType="com.ruoyi.admin.domain.CooperateOrg" resultMap="CooperateOrgResult">
+        <include refid="selectCooperateOrgVo"/>
+        <where>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat('%', #{orgName}, '%')</if>
+            <if test="orgType != null "> and org_type = #{orgType}</if>
+            <if test="contactPerson != null  and contactPerson != ''"> and contact_person like concat('%', #{contactPerson}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            and is_deleted = 0
+        </where>
+    </select>
+
+    <select id="selectCooperateOrgByOrgId" parameterType="Long" resultMap="CooperateOrgResult">
+        <include refid="selectCooperateOrgVo"/>
+        where org_id = #{orgId} and is_deleted = 0
+    </select>
+
+    <select id="selectCooperateOrgStats" resultType="com.ruoyi.admin.domain.CooperateOrg">
+        select
+            count(case when status = 0 then 1 end) as pendingCount,
+            count(case when status = 1 then 1 end) as approvedCount,
+            count(case when status = 2 then 1 end) as suspendedCount,
+            count(case when status = 3 then 1 end) as terminatedCount,
+            count(*) as totalCount
+        from cooperate_org
+        where is_deleted = 0
+    </select>
+
+    <insert id="insertCooperateOrg" parameterType="com.ruoyi.admin.domain.CooperateOrg" useGeneratedKeys="true" keyProperty="orgId">
+        insert into cooperate_org
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orgName != null">org_name,</if>
+            <if test="orgType != null">org_type,</if>
+            <if test="licenseNo != null">license_no,</if>
+            <if test="contactPerson != null">contact_person,</if>
+            <if test="contactPhone != null">contact_phone,</if>
+            <if test="address != null">address,</if>
+            <if test="businessScope != null">business_scope,</if>
+            <if test="status != null">status,</if>
+            <if test="auditTime != null">audit_time,</if>
+            <if test="auditUserId != null">audit_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orgName != null">#{orgName},</if>
+            <if test="orgType != null">#{orgType},</if>
+            <if test="licenseNo != null">#{licenseNo},</if>
+            <if test="contactPerson != null">#{contactPerson},</if>
+            <if test="contactPhone != null">#{contactPhone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="businessScope != null">#{businessScope},</if>
+            <if test="status != null">#{status},</if>
+            <if test="auditTime != null">#{auditTime},</if>
+            <if test="auditUserId != null">#{auditUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCooperateOrg" parameterType="com.ruoyi.admin.domain.CooperateOrg">
+        update cooperate_org
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orgName != null">org_name = #{orgName},</if>
+            <if test="orgType != null">org_type = #{orgType},</if>
+            <if test="licenseNo != null">license_no = #{licenseNo},</if>
+            <if test="contactPerson != null">contact_person = #{contactPerson},</if>
+            <if test="contactPhone != null">contact_phone = #{contactPhone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="businessScope != null">business_scope = #{businessScope},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="auditTime != null">audit_time = #{auditTime},</if>
+            <if test="auditUserId != null">audit_user_id = #{auditUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where org_id = #{orgId}
+    </update>
+
+    <delete id="deleteCooperateOrgByOrgId" parameterType="Long">
+        update cooperate_org set is_deleted = 1 where org_id = #{orgId}
+    </delete>
+
+    <delete id="deleteCooperateOrgByOrgIds" parameterType="Long">
+        update cooperate_org set is_deleted = 1 where org_id in
+        <foreach item="orgId" collection="array" open="(" separator="," close=")">
+            #{orgId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.adoption.mapper.AdoptApplicationMapper">
+
+    <resultMap type="com.ruoyi.adoption.domain.AdoptApplication" id="AdoptApplicationResult">
+        <result property="applicationId"    column="application_id"    />
+        <result property="releaseId"    column="release_id"    />
+        <result property="petId"    column="pet_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="housingType"    column="housing_type"    />
+        <result property="petAllowed"    column="pet_allowed"    />
+        <result property="hasEnclosedBalcony"    column="has_enclosed_balcony"    />
+        <result property="familyAgree"    column="family_agree"    />
+        <result property="hasAllergy"    column="has_allergy"    />
+        <result property="workSchedule"    column="work_schedule"    />
+        <result property="companionTime"    column="companion_time"    />
+        <result property="knowBasicCost"    column="know_basic_cost"    />
+        <result property="canAffordMedical"    column="can_afford_medical"    />
+        <result property="scientificFeeding"    column="scientific_feeding"    />
+        <result property="agreeSterilization"    column="agree_sterilization"    />
+        <result property="petExperience"    column="pet_experience"    />
+        <result property="futurePlans"    column="future_plans"    />
+        <result property="noAbandon"    column="no_abandon"    />
+        <result property="acceptVisit"    column="accept_visit"    />
+        <result property="applicantName"    column="applicant_name"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="address"    column="address"    />
+        <result property="livingProveUrl"    column="living_prove_url"    />
+        <result property="agreementUrl"    column="agreement_url"    />
+        <result property="applyStatus"    column="apply_status"    />
+        <result property="reviewUserId"    column="review_user_id"    />
+        <result property="reviewRemark"    column="review_remark"    />
+        <result property="reviewTime"    column="review_time"    />
+        <result property="depositAmount"    column="deposit_amount"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectAdoptApplicationVo">
+        select application_id, release_id, pet_id, user_id, housing_type, pet_allowed, has_enclosed_balcony, family_agree, has_allergy, work_schedule, companion_time, know_basic_cost, can_afford_medical, scientific_feeding, agree_sterilization, pet_experience, future_plans, no_abandon, accept_visit, applicant_name, contact_phone, address, living_prove_url, agreement_url, apply_status, review_user_id, review_remark, review_time, deposit_amount, create_time, update_time, is_deleted from adopt_application
+    </sql>
+
+    <select id="selectAdoptApplicationList" parameterType="com.ruoyi.adoption.domain.AdoptApplication" resultMap="AdoptApplicationResult">
+        <include refid="selectAdoptApplicationVo"/>
+        <where>
+            <if test="applicantName != null  and applicantName != ''"> and applicant_name like concat('%', #{applicantName}, '%')</if>
+            <if test="contactPhone != null  and contactPhone != ''"> and contact_phone like concat('%', #{contactPhone}, '%')</if>
+            <if test="applyStatus != null "> and apply_status = #{applyStatus}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            and is_deleted = 0
+        </where>
+    </select>
+
+    <select id="selectAdoptApplicationByApplicationId" parameterType="Long" resultMap="AdoptApplicationResult">
+        <include refid="selectAdoptApplicationVo"/>
+        where application_id = #{applicationId} and is_deleted = 0
+    </select>
+
+    <insert id="insertAdoptApplication" parameterType="com.ruoyi.adoption.domain.AdoptApplication" useGeneratedKeys="true" keyProperty="applicationId">
+        insert into adopt_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="releaseId != null">release_id,</if>
+            <if test="petId != null">pet_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="housingType != null">housing_type,</if>
+            <if test="petAllowed != null">pet_allowed,</if>
+            <if test="hasEnclosedBalcony != null">has_enclosed_balcony,</if>
+            <if test="familyAgree != null">family_agree,</if>
+            <if test="hasAllergy != null">has_allergy,</if>
+            <if test="workSchedule != null">work_schedule,</if>
+            <if test="companionTime != null">companion_time,</if>
+            <if test="knowBasicCost != null">know_basic_cost,</if>
+            <if test="canAffordMedical != null">can_afford_medical,</if>
+            <if test="scientificFeeding != null">scientific_feeding,</if>
+            <if test="agreeSterilization != null">agree_sterilization,</if>
+            <if test="petExperience != null">pet_experience,</if>
+            <if test="futurePlans != null">future_plans,</if>
+            <if test="noAbandon != null">no_abandon,</if>
+            <if test="acceptVisit != null">accept_visit,</if>
+            <if test="applicantName != null">applicant_name,</if>
+            <if test="contactPhone != null">contact_phone,</if>
+            <if test="address != null">address,</if>
+            <if test="livingProveUrl != null">living_prove_url,</if>
+            <if test="agreementUrl != null">agreement_url,</if>
+            <if test="applyStatus != null">apply_status,</if>
+            <if test="reviewUserId != null">review_user_id,</if>
+            <if test="reviewRemark != null">review_remark,</if>
+            <if test="reviewTime != null">review_time,</if>
+            <if test="depositAmount != null">deposit_amount,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="releaseId != null">#{releaseId},</if>
+            <if test="petId != null">#{petId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="housingType != null">#{housingType},</if>
+            <if test="petAllowed != null">#{petAllowed},</if>
+            <if test="hasEnclosedBalcony != null">#{hasEnclosedBalcony},</if>
+            <if test="familyAgree != null">#{familyAgree},</if>
+            <if test="hasAllergy != null">#{hasAllergy},</if>
+            <if test="workSchedule != null">#{workSchedule},</if>
+            <if test="companionTime != null">#{companionTime},</if>
+            <if test="knowBasicCost != null">#{knowBasicCost},</if>
+            <if test="canAffordMedical != null">#{canAffordMedical},</if>
+            <if test="scientificFeeding != null">#{scientificFeeding},</if>
+            <if test="agreeSterilization != null">#{agreeSterilization},</if>
+            <if test="petExperience != null">#{petExperience},</if>
+            <if test="futurePlans != null">#{futurePlans},</if>
+            <if test="noAbandon != null">#{noAbandon},</if>
+            <if test="acceptVisit != null">#{acceptVisit},</if>
+            <if test="applicantName != null">#{applicantName},</if>
+            <if test="contactPhone != null">#{contactPhone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="livingProveUrl != null">#{livingProveUrl},</if>
+            <if test="agreementUrl != null">#{agreementUrl},</if>
+            <if test="applyStatus != null">#{applyStatus},</if>
+            <if test="reviewUserId != null">#{reviewUserId},</if>
+            <if test="reviewRemark != null">#{reviewRemark},</if>
+            <if test="reviewTime != null">#{reviewTime},</if>
+            <if test="depositAmount != null">#{depositAmount},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAdoptApplication" parameterType="com.ruoyi.adoption.domain.AdoptApplication">
+        update adopt_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="releaseId != null">release_id = #{releaseId},</if>
+            <if test="petId != null">pet_id = #{petId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="housingType != null">housing_type = #{housingType},</if>
+            <if test="petAllowed != null">pet_allowed = #{petAllowed},</if>
+            <if test="hasEnclosedBalcony != null">has_enclosed_balcony = #{hasEnclosedBalcony},</if>
+            <if test="familyAgree != null">family_agree = #{familyAgree},</if>
+            <if test="hasAllergy != null">has_allergy = #{hasAllergy},</if>
+            <if test="workSchedule != null">work_schedule = #{workSchedule},</if>
+            <if test="companionTime != null">companion_time = #{companionTime},</if>
+            <if test="knowBasicCost != null">know_basic_cost = #{knowBasicCost},</if>
+            <if test="canAffordMedical != null">can_afford_medical = #{canAffordMedical},</if>
+            <if test="scientificFeeding != null">scientific_feeding = #{scientificFeeding},</if>
+            <if test="agreeSterilization != null">agree_sterilization = #{agreeSterilization},</if>
+            <if test="petExperience != null">pet_experience = #{petExperience},</if>
+            <if test="futurePlans != null">future_plans = #{futurePlans},</if>
+            <if test="noAbandon != null">no_abandon = #{noAbandon},</if>
+            <if test="acceptVisit != null">accept_visit = #{acceptVisit},</if>
+            <if test="applicantName != null">applicant_name = #{applicantName},</if>
+            <if test="contactPhone != null">contact_phone = #{contactPhone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="livingProveUrl != null">living_prove_url = #{livingProveUrl},</if>
+            <if test="agreementUrl != null">agreement_url = #{agreementUrl},</if>
+            <if test="applyStatus != null">apply_status = #{applyStatus},</if>
+            <if test="reviewUserId != null">review_user_id = #{reviewUserId},</if>
+            <if test="reviewRemark != null">review_remark = #{reviewRemark},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="depositAmount != null">deposit_amount = #{depositAmount},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where application_id = #{applicationId}
+    </update>
+
+    <delete id="deleteAdoptApplicationByApplicationId" parameterType="Long">
+        update adopt_application set is_deleted = 1 where application_id = #{applicationId}
+    </delete>
+
+    <delete id="deleteAdoptApplicationByApplicationIds" parameterType="Long">
+        update adopt_application set is_deleted = 1 where application_id in
+        <foreach item="applicationId" collection="array" open="(" separator="," close=")">
+            #{applicationId}
+        </foreach>
+    </delete>
+</mapper>

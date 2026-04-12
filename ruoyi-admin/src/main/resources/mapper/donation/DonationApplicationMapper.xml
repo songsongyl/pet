@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.donation.mapper.DonationApplicationMapper">
+
+    <resultMap type="com.ruoyi.donation.domain.DonationApplication" id="DonationApplicationResult">
+        <result property="donationId"    column="donation_id"    />
+        <result property="donorName"    column="donor_name"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="donationType"    column="donation_type"    />
+        <result property="donationMethod"    column="donation_method"    />
+        <result property="donationAddress"    column="donation_address"    />
+        <result property="shippingAddress"    column="shipping_address"    />
+        <result property="donationTime"    column="donation_time"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="donationStatus"    column="donation_status"    />
+        <result property="confirmTime"    column="confirm_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectDonationApplicationVo">
+        select donation_id, donor_name, contact_phone, donation_type, donation_method, donation_address, shipping_address, donation_time, remarks, donation_status, confirm_time, create_time, update_time, is_deleted from donation_application
+    </sql>
+
+    <select id="selectDonationApplicationList" parameterType="com.ruoyi.donation.domain.DonationApplication" resultMap="DonationApplicationResult">
+        <include refid="selectDonationApplicationVo"/>
+        <where>
+            <if test="donorName != null  and donorName != ''"> and donor_name like concat('%', #{donorName}, '%')</if>
+            <if test="contactPhone != null  and contactPhone != ''"> and contact_phone like concat('%', #{contactPhone}, '%')</if>
+            <if test="donationType != null  and donationType != ''"> and donation_type = #{donationType}</if>
+            <if test="donationStatus != null "> and donation_status = #{donationStatus}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            and is_deleted = 0
+        </where>
+    </select>
+
+    <select id="selectDonationApplicationByDonationId" parameterType="Long" resultMap="DonationApplicationResult">
+        <include refid="selectDonationApplicationVo"/>
+        where donation_id = #{donationId} and is_deleted = 0
+    </select>
+
+    <insert id="insertDonationApplication" parameterType="com.ruoyi.donation.domain.DonationApplication" useGeneratedKeys="true" keyProperty="donationId">
+        insert into donation_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="donorName != null">donor_name,</if>
+            <if test="contactPhone != null">contact_phone,</if>
+            <if test="donationType != null">donation_type,</if>
+            <if test="donationMethod != null">donation_method,</if>
+            <if test="donationAddress != null">donation_address,</if>
+            <if test="shippingAddress != null">shipping_address,</if>
+            <if test="donationTime != null">donation_time,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="donationStatus != null">donation_status,</if>
+            <if test="confirmTime != null">confirm_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="donorName != null">#{donorName},</if>
+            <if test="contactPhone != null">#{contactPhone},</if>
+            <if test="donationType != null">#{donationType},</if>
+            <if test="donationMethod != null">#{donationMethod},</if>
+            <if test="donationAddress != null">#{donationAddress},</if>
+            <if test="shippingAddress != null">#{shippingAddress},</if>
+            <if test="donationTime != null">#{donationTime},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="donationStatus != null">#{donationStatus},</if>
+            <if test="confirmTime != null">#{confirmTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDonationApplication" parameterType="com.ruoyi.donation.domain.DonationApplication">
+        update donation_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="donorName != null">donor_name = #{donorName},</if>
+            <if test="contactPhone != null">contact_phone = #{contactPhone},</if>
+            <if test="donationType != null">donation_type = #{donationType},</if>
+            <if test="donationMethod != null">donation_method = #{donationMethod},</if>
+            <if test="donationAddress != null">donation_address = #{donationAddress},</if>
+            <if test="shippingAddress != null">shipping_address = #{shippingAddress},</if>
+            <if test="donationTime != null">donation_time = #{donationTime},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="donationStatus != null">donation_status = #{donationStatus},</if>
+            <if test="confirmTime != null">confirm_time = #{confirmTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where donation_id = #{donationId}
+    </update>
+
+    <delete id="deleteDonationApplicationByDonationId" parameterType="Long">
+        update donation_application set is_deleted = 1 where donation_id = #{donationId}
+    </delete>
+
+    <delete id="deleteDonationApplicationByDonationIds" parameterType="Long">
+        update donation_application set is_deleted = 1 where donation_id in
+        <foreach item="donationId" collection="array" open="(" separator="," close=")">
+            #{donationId}
+        </foreach>
+    </delete>
+</mapper>

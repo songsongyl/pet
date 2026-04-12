@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.PetImageMapper">
+    
+    <resultMap type="PetImage" id="PetImageResult">
+        <result property="imageId"    column="image_id"    />
+        <result property="petId"    column="pet_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="imageType"    column="image_type"    />
+        <result property="sort"    column="sort"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectPetImageVo">
+        select image_id, pet_id, image_url, image_type, sort, create_time, is_deleted from pet_image
+    </sql>
+
+    <select id="selectPetImageList" parameterType="PetImage" resultMap="PetImageResult">
+        <include refid="selectPetImageVo"/>
+        <where>  
+            <if test="petId != null "> and pet_id = #{petId}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="imageType != null "> and image_type = #{imageType}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+        order by sort desc, create_time desc
+    </select>
+    
+    <select id="selectPetImagesByPetId" parameterType="Long" resultMap="PetImageResult">
+        <include refid="selectPetImageVo"/>
+        where pet_id = #{petId} and is_deleted = 0
+        order by sort desc, create_time desc
+    </select>
+    
+    <select id="selectPetImageByImageId" parameterType="Long" resultMap="PetImageResult">
+        <include refid="selectPetImageVo"/>
+        where image_id = #{imageId}
+    </select>
+
+    <insert id="insertPetImage" parameterType="PetImage" useGeneratedKeys="true" keyProperty="imageId">
+        insert into pet_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petId != null">pet_id,</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url,</if>
+            <if test="imageType != null">image_type,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="petId != null">#{petId},</if>
+            <if test="imageUrl != null and imageUrl != ''">#{imageUrl},</if>
+            <if test="imageType != null">#{imageType},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePetImage" parameterType="PetImage">
+        update pet_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="petId != null">pet_id = #{petId},</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
+            <if test="imageType != null">image_type = #{imageType},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where image_id = #{imageId}
+    </update>
+
+    <delete id="deletePetImageByImageId" parameterType="Long">
+        delete from pet_image where image_id = #{imageId}
+    </delete>
+
+    <delete id="deletePetImageByImageIds" parameterType="String">
+        delete from pet_image where image_id in 
+        <foreach item="imageId" collection="array" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </delete>
+    
+    <delete id="deletePetImagesByPetId" parameterType="Long">
+        delete from pet_image where pet_id = #{petId}
+    </delete>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.give.mapper.RescueInfoMapper">
+    
+    <resultMap type="RescueInfo" id="RescueInfoResult">
+        <result property="rescueId"    column="rescue_id"    />
+        <result property="petId"    column="pet_id"    />
+        <result property="rescueTitle"    column="rescue_title"    />
+        <result property="rescueStatus"    column="rescue_status"    />
+        <result property="urgentLevel"    column="urgent_level"    />
+        <result property="needType"    column="need_type"    />
+        <result property="needDesc"    column="need_desc"    />
+        <result property="targetAmount"    column="target_amount"    />
+        <result property="raisedAmount"    column="raised_amount"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="verifyStatus"    column="verify_status"    />
+        <result property="verifyUserId"    column="verify_user_id"    />
+        <result property="verifyRemark"    column="verify_remark"    />
+        <result property="foundPlace"    column="found_place"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectRescueInfoVo">
+        select r.rescue_id, r.pet_id, r.rescue_title, r.rescue_status, r.urgent_level, r.need_type, r.need_desc, r.target_amount, r.raised_amount, r.start_time, r.end_time, r.verify_status, r.verify_user_id, r.verify_remark, p.found_place, r.create_time, r.update_time, r.is_deleted 
+        from rescue_info r
+        left join pet_info p on r.pet_id = p.pet_id
+    </sql>
+
+    <select id="selectRescueInfoList" parameterType="RescueInfo" resultMap="RescueInfoResult">
+        <include refid="selectRescueInfoVo"/>
+        <where>  
+            <if test="petId != null "> and pet_id = #{petId}</if>
+            <if test="rescueTitle != null  and rescueTitle != ''"> and rescue_title = #{rescueTitle}</if>
+            <if test="rescueStatus != null "> and rescue_status = #{rescueStatus}</if>
+            <if test="urgentLevel != null "> and urgent_level = #{urgentLevel}</if>
+            <if test="needType != null  and needType != ''"> and need_type = #{needType}</if>
+            <if test="needDesc != null  and needDesc != ''"> and need_desc = #{needDesc}</if>
+            <if test="targetAmount != null "> and target_amount = #{targetAmount}</if>
+            <if test="raisedAmount != null "> and raised_amount = #{raisedAmount}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="verifyStatus != null "> and verify_status = #{verifyStatus}</if>
+            <if test="verifyUserId != null "> and verify_user_id = #{verifyUserId}</if>
+            <if test="verifyRemark != null  and verifyRemark != ''"> and verify_remark = #{verifyRemark}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+    
+    <select id="selectRescueInfoByRescueId" parameterType="Long" resultMap="RescueInfoResult">
+        <include refid="selectRescueInfoVo"/>
+        where rescue_id = #{rescueId}
+    </select>
+
+    <insert id="insertRescueInfo" parameterType="RescueInfo" useGeneratedKeys="true" keyProperty="rescueId">
+        insert into rescue_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petId != null">pet_id,</if>
+            <if test="rescueTitle != null">rescue_title,</if>
+            <if test="rescueStatus != null">rescue_status,</if>
+            <if test="urgentLevel != null">urgent_level,</if>
+            <if test="needType != null">need_type,</if>
+            <if test="needDesc != null">need_desc,</if>
+            <if test="targetAmount != null">target_amount,</if>
+            <if test="raisedAmount != null">raised_amount,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="verifyStatus != null">verify_status,</if>
+            <if test="verifyUserId != null">verify_user_id,</if>
+            <if test="verifyRemark != null">verify_remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="petId != null">#{petId},</if>
+            <if test="rescueTitle != null">#{rescueTitle},</if>
+            <if test="rescueStatus != null">#{rescueStatus},</if>
+            <if test="urgentLevel != null">#{urgentLevel},</if>
+            <if test="needType != null">#{needType},</if>
+            <if test="needDesc != null">#{needDesc},</if>
+            <if test="targetAmount != null">#{targetAmount},</if>
+            <if test="raisedAmount != null">#{raisedAmount},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="verifyStatus != null">#{verifyStatus},</if>
+            <if test="verifyUserId != null">#{verifyUserId},</if>
+            <if test="verifyRemark != null">#{verifyRemark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRescueInfo" parameterType="RescueInfo">
+        update rescue_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="petId != null">pet_id = #{petId},</if>
+            <if test="rescueTitle != null and rescueTitle != ''">rescue_title = #{rescueTitle},</if>
+            <if test="rescueStatus != null">rescue_status = #{rescueStatus},</if>
+            <if test="urgentLevel != null">urgent_level = #{urgentLevel},</if>
+            <if test="needType != null and needType != ''">need_type = #{needType},</if>
+            <if test="needDesc != null and needDesc != ''">need_desc = #{needDesc},</if>
+            <if test="targetAmount != null">target_amount = #{targetAmount},</if>
+            <if test="raisedAmount != null">raised_amount = #{raisedAmount},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="verifyStatus != null">verify_status = #{verifyStatus},</if>
+            <if test="verifyUserId != null">verify_user_id = #{verifyUserId},</if>
+            <if test="verifyRemark != null">verify_remark = #{verifyRemark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where rescue_id = #{rescueId}
+    </update>
+
+    <delete id="deleteRescueInfoByRescueId" parameterType="Long">
+        delete from rescue_info where rescue_id = #{rescueId}
+    </delete>
+
+    <delete id="deleteRescueInfoByRescueIds" parameterType="String">
+        delete from rescue_info where rescue_id in 
+        <foreach item="rescueId" collection="array" open="(" separator="," close=")">
+            #{rescueId}
+        </foreach>
+    </delete>
+</mapper>

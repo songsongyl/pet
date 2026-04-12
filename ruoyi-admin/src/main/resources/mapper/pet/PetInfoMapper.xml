@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.PetInfoMapper">
+    
+    <resultMap type="PetInfo" id="PetInfoResult">
+        <result property="petId"    column="pet_id"    />
+        <result property="petCode"    column="pet_code"    />
+        <result property="petName"    column="pet_name"    />
+        <result property="petType"    column="pet_type"    />
+        <result property="breed"    column="breed"    />
+        <result property="age"    column="age"    />
+        <result property="gender"    column="gender"    />
+        <result property="healthStatus"    column="health_status"    />
+        <result property="sterilization"    column="sterilization"    />
+        <result property="vaccineStatus"    column="vaccine_status"    />
+        <result property="chipNo"    column="chip_no"    />
+        <result property="foundPlace"    column="found_place"    />
+        <result property="foundTime"    column="found_time"    />
+        <result property="petDesc"    column="pet_desc"    />
+        <result property="petStatus"    column="pet_status"    />
+        <result property="publisherId"    column="publisher_id"    />
+        <result property="publisherType"    column="publisher_type"    />
+        <result property="orgId"    column="org_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectPetInfoVo">
+        select pet_id, pet_code, pet_name, pet_type, breed, age, gender, health_status, sterilization, vaccine_status, chip_no, found_place, found_time, pet_desc, pet_status, publisher_id, publisher_type, org_id, create_time, update_time, is_deleted from pet_info
+    </sql>
+
+    <select id="selectPetInfoList" parameterType="PetInfo" resultMap="PetInfoResult">
+        <include refid="selectPetInfoVo"/>
+        <where>  
+            <if test="petCode != null  and petCode != ''"> and pet_code = #{petCode}</if>
+            <if test="petName != null  and petName != ''"> and pet_name like concat('%', #{petName}, '%')</if>
+            <if test="petType != null "> and pet_type = #{petType}</if>
+            <if test="breed != null  and breed != ''"> and breed = #{breed}</if>
+            <if test="age != null  and age != ''"> and age = #{age}</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="healthStatus != null "> and health_status = #{healthStatus}</if>
+            <if test="sterilization != null "> and sterilization = #{sterilization}</if>
+            <if test="vaccineStatus != null "> and vaccine_status = #{vaccineStatus}</if>
+            <if test="foundPlace != null  and foundPlace != ''"> and found_place = #{foundPlace}</if>
+            <if test="foundTime != null "> and found_time = #{foundTime}</if>
+            <if test="petDesc != null  and petDesc != ''"> and pet_desc = #{petDesc}</if>
+            <if test="petStatus != null "> and pet_status = #{petStatus}</if>
+            <if test="publisherId != null "> and publisher_id = #{publisherId}</if>
+            <if test="publisherType != null "> and publisher_type = #{publisherType}</if>
+            <if test="orgId != null "> and org_id = #{orgId}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+    
+    <select id="selectPetInfoByPetId" parameterType="Long" resultMap="PetInfoResult">
+        <include refid="selectPetInfoVo"/>
+        where pet_id = #{petId}
+    </select>
+
+    <insert id="insertPetInfo" parameterType="PetInfo" useGeneratedKeys="true" keyProperty="petId">
+        insert into pet_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petCode != null and petCode != ''">pet_code,</if>
+            <if test="petName != null and petName != ''">pet_name,</if>
+            <if test="petType != null">pet_type,</if>
+            <if test="breed != null">breed,</if>
+            <if test="age != null">age,</if>
+            <if test="gender != null">gender,</if>
+            <if test="healthStatus != null">health_status,</if>
+            <if test="sterilization != null">sterilization,</if>
+            <if test="vaccineStatus != null">vaccine_status,</if>
+            <if test="chipNo != null and chipNo != ''">chip_no,</if>
+            <if test="foundPlace != null and foundPlace != ''">found_place,</if>
+            <if test="foundTime != null">found_time,</if>
+            <if test="petDesc != null">pet_desc,</if>
+            <if test="petStatus != null">pet_status,</if>
+            <if test="publisherId != null">publisher_id,</if>
+            <if test="publisherType != null">publisher_type,</if>
+            <if test="orgId != null">org_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="petCode != null and petCode != ''">#{petCode},</if>
+            <if test="petName != null and petName != ''">#{petName},</if>
+            <if test="petType != null">#{petType},</if>
+            <if test="breed != null">#{breed},</if>
+            <if test="age != null">#{age},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="healthStatus != null">#{healthStatus},</if>
+            <if test="sterilization != null">#{sterilization},</if>
+            <if test="vaccineStatus != null">#{vaccineStatus},</if>
+            <if test="chipNo != null and chipNo != ''">#{chipNo},</if>
+            <if test="foundPlace != null and foundPlace != ''">#{foundPlace},</if>
+            <if test="foundTime != null">#{foundTime},</if>
+            <if test="petDesc != null">#{petDesc},</if>
+            <if test="petStatus != null">#{petStatus},</if>
+            <if test="publisherId != null">#{publisherId},</if>
+            <if test="publisherType != null">#{publisherType},</if>
+            <if test="orgId != null">#{orgId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePetInfo" parameterType="PetInfo">
+        update pet_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="petCode != null and petCode != ''">pet_code = #{petCode},</if>
+            <if test="petName != null and petName != ''">pet_name = #{petName},</if>
+            <if test="petType != null">pet_type = #{petType},</if>
+            <if test="breed != null">breed = #{breed},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="healthStatus != null">health_status = #{healthStatus},</if>
+            <if test="sterilization != null">sterilization = #{sterilization},</if>
+            <if test="vaccineStatus != null">vaccine_status = #{vaccineStatus},</if>
+            <if test="chipNo != null and chipNo != ''">chip_no = #{chipNo},</if>
+            <if test="foundPlace != null and foundPlace != ''">found_place = #{foundPlace},</if>
+            <if test="foundTime != null">found_time = #{foundTime},</if>
+            <if test="petDesc != null">pet_desc = #{petDesc},</if>
+            <if test="petStatus != null">pet_status = #{petStatus},</if>
+            <if test="publisherId != null">publisher_id = #{publisherId},</if>
+            <if test="publisherType != null">publisher_type = #{publisherType},</if>
+            <if test="orgId != null">org_id = #{orgId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where pet_id = #{petId}
+    </update>
+
+    <delete id="deletePetInfoByPetId" parameterType="Long">
+        delete from pet_info where pet_id = #{petId}
+    </delete>
+
+    <delete id="deletePetInfoByPetIds" parameterType="String">
+        delete from pet_info where pet_id in 
+        <foreach item="petId" collection="array" open="(" separator="," close=")">
+            #{petId}
+        </foreach>
+    </delete>
+</mapper>

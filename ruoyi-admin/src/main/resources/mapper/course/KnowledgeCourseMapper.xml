@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.course.mapper.KnowledgeCourseMapper">
+    
+    <resultMap type="KnowledgeCourse" id="KnowledgeCourseResult">
+        <result property="courseId"    column="course_id"    />
+        <result property="courseTitle"    column="course_title"    />
+        <result property="courseType"    column="course_type"    />
+        <result property="difficultyLevel"    column="difficulty_level"    />
+        <result property="courseCover"    column="course_cover"    />
+        <result property="courseContent"    column="course_content"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherDesc"    column="teacher_desc"    />
+        <result property="viewCount"    column="view_count"    />
+        <result property="collectCount"    column="collect_count"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="publishUserId"    column="publish_user_id"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectKnowledgeCourseVo">
+        select course_id, course_title, course_type, difficulty_level, course_cover, course_content, teacher_name, teacher_desc, view_count, collect_count, publish_status, publish_user_id, publish_time, create_time, update_time, is_deleted from knowledge_course
+    </sql>
+
+    <select id="selectKnowledgeCourseList" parameterType="KnowledgeCourse" resultMap="KnowledgeCourseResult">
+        <include refid="selectKnowledgeCourseVo"/>
+        <where>  
+            <if test="courseTitle != null  and courseTitle != ''"> and course_title = #{courseTitle}</if>
+            <if test="courseType != null "> and course_type = #{courseType}</if>
+            <if test="difficultyLevel != null "> and difficulty_level = #{difficultyLevel}</if>
+            <if test="courseCover != null  and courseCover != ''"> and course_cover = #{courseCover}</if>
+            <if test="courseContent != null  and courseContent != ''"> and course_content = #{courseContent}</if>
+            <if test="teacherName != null  and teacherName != ''"> and teacher_name like concat('%', #{teacherName}, '%')</if>
+            <if test="teacherDesc != null  and teacherDesc != ''"> and teacher_desc = #{teacherDesc}</if>
+            <if test="viewCount != null "> and view_count = #{viewCount}</if>
+            <if test="collectCount != null "> and collect_count = #{collectCount}</if>
+            <if test="publishStatus != null "> and publish_status = #{publishStatus}</if>
+            <if test="publishUserId != null "> and publish_user_id = #{publishUserId}</if>
+            <if test="publishTime != null "> and publish_time = #{publishTime}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+    
+    <select id="selectKnowledgeCourseByCourseId" parameterType="Long" resultMap="KnowledgeCourseResult">
+        <include refid="selectKnowledgeCourseVo"/>
+        where course_id = #{courseId}
+    </select>
+
+    <insert id="insertKnowledgeCourse" parameterType="KnowledgeCourse" useGeneratedKeys="true" keyProperty="courseId">
+        insert into knowledge_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseTitle != null and courseTitle != ''">course_title,</if>
+            <if test="courseType != null">course_type,</if>
+            <if test="difficultyLevel != null">difficulty_level,</if>
+            <if test="courseCover != null">course_cover,</if>
+            <if test="courseContent != null and courseContent != ''">course_content,</if>
+            <if test="teacherName != null">teacher_name,</if>
+            <if test="teacherDesc != null">teacher_desc,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="collectCount != null">collect_count,</if>
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="publishUserId != null">publish_user_id,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseTitle != null and courseTitle != ''">#{courseTitle},</if>
+            <if test="courseType != null">#{courseType},</if>
+            <if test="difficultyLevel != null">#{difficultyLevel},</if>
+            <if test="courseCover != null">#{courseCover},</if>
+            <if test="courseContent != null and courseContent != ''">#{courseContent},</if>
+            <if test="teacherName != null">#{teacherName},</if>
+            <if test="teacherDesc != null">#{teacherDesc},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="collectCount != null">#{collectCount},</if>
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="publishUserId != null">#{publishUserId},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateKnowledgeCourse" parameterType="KnowledgeCourse">
+        update knowledge_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseTitle != null and courseTitle != ''">course_title = #{courseTitle},</if>
+            <if test="courseType != null">course_type = #{courseType},</if>
+            <if test="difficultyLevel != null">difficulty_level = #{difficultyLevel},</if>
+            <if test="courseCover != null">course_cover = #{courseCover},</if>
+            <if test="courseContent != null and courseContent != ''">course_content = #{courseContent},</if>
+            <if test="teacherName != null">teacher_name = #{teacherName},</if>
+            <if test="teacherDesc != null">teacher_desc = #{teacherDesc},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="collectCount != null">collect_count = #{collectCount},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="publishUserId != null">publish_user_id = #{publishUserId},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where course_id = #{courseId}
+    </update>
+
+    <delete id="deleteKnowledgeCourseByCourseId" parameterType="Long">
+        delete from knowledge_course where course_id = #{courseId}
+    </delete>
+
+    <delete id="deleteKnowledgeCourseByCourseIds" parameterType="String">
+        delete from knowledge_course where course_id in 
+        <foreach item="courseId" collection="array" open="(" separator="," close=")">
+            #{courseId}
+        </foreach>
+    </delete>
+</mapper>

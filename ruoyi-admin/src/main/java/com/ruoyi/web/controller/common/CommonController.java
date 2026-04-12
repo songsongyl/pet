@@ -76,16 +76,22 @@ public class CommonController
     {
         try
         {
+            // 检查文件大小，限制5MB
+            long maxSize = 5 * 1024 * 1024L;
+            if (file.getSize() > maxSize)
+            {
+                return AjaxResult.error("文件大小超过5MB");
+            }
+
+            // 允许的文件类型
+            String[] allowedExtensions = {"jpeg", "jpg", "png", "svg", "mp4", "doc", "xls", "ppt", "txt", "pdf"};
+
             // 上传文件路径
             String filePath = RuoYiConfig.getUploadPath();
             // 上传并返回新文件名称
-            String fileName = FileUploadUtils.upload(filePath, file);
-            String url = serverConfig.getUrl() + fileName;
-            AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", url);
+            String fileName = FileUploadUtils.upload(filePath, file, allowedExtensions);
+            AjaxResult ajax = AjaxResult.success("上传成功");
             ajax.put("fileName", fileName);
-            ajax.put("newFileName", FileUtils.getName(fileName));
-            ajax.put("originalFilename", file.getOriginalFilename());
             return ajax;
         }
         catch (Exception e)

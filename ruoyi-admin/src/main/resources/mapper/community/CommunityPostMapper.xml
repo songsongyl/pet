@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.community.mapper.CommunityPostMapper">
+
+    <resultMap type="com.ruoyi.community.domain.CommunityPost" id="CommunityPostResult">
+        <result property="postId"    column="post_id"    />
+        <result property="title"    column="title"    />
+        <result property="category"    column="category"    />
+        <result property="content"    column="content"    />
+        <result property="author"    column="author"    />
+        <result property="authorId"    column="author_id"    />
+        <result property="likeCount"    column="like_count"    />
+        <result property="commentCount"    column="comment_count"    />
+        <result property="collectCount"    column="collect_count"    />
+        <result property="viewCount"    column="view_count"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectCommunityPostVo">
+        select post_id, title, category, content, author, author_id, like_count, comment_count, collect_count, view_count, status, create_time, update_time, is_deleted from community_post
+    </sql>
+
+    <select id="selectCommunityPostList" parameterType="com.ruoyi.community.domain.CommunityPost" resultMap="CommunityPostResult">
+        <include refid="selectCommunityPostVo"/>
+        <where>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="author != null  and author != ''"> and author like concat('%', #{author}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            and is_deleted = 0
+        </where>
+    </select>
+
+    <select id="selectCommunityPostByPostId" parameterType="Long" resultMap="CommunityPostResult">
+        <include refid="selectCommunityPostVo"/>
+        where post_id = #{postId} and is_deleted = 0
+    </select>
+
+    <insert id="insertCommunityPost" parameterType="com.ruoyi.community.domain.CommunityPost" useGeneratedKeys="true" keyProperty="postId">
+        insert into community_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">title,</if>
+            <if test="category != null">category,</if>
+            <if test="content != null">content,</if>
+            <if test="author != null">author,</if>
+            <if test="authorId != null">author_id,</if>
+            <if test="likeCount != null">like_count,</if>
+            <if test="commentCount != null">comment_count,</if>
+            <if test="collectCount != null">collect_count,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">#{title},</if>
+            <if test="category != null">#{category},</if>
+            <if test="content != null">#{content},</if>
+            <if test="author != null">#{author},</if>
+            <if test="authorId != null">#{authorId},</if>
+            <if test="likeCount != null">#{likeCount},</if>
+            <if test="commentCount != null">#{commentCount},</if>
+            <if test="collectCount != null">#{collectCount},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCommunityPost" parameterType="com.ruoyi.community.domain.CommunityPost">
+        update community_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="authorId != null">author_id = #{authorId},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+            <if test="collectCount != null">collect_count = #{collectCount},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where post_id = #{postId}
+    </update>
+
+    <delete id="deleteCommunityPostByPostId" parameterType="Long">
+        update community_post set is_deleted = 1 where post_id = #{postId}
+    </delete>
+
+    <delete id="deleteCommunityPostByPostIds" parameterType="Long">
+        update community_post set is_deleted = 1 where post_id in
+        <foreach item="postId" collection="array" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+</mapper>
