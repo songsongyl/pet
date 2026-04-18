@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.story.mapper.StoryCommentMapper">
+    <resultMap type="com.ruoyi.story.domain.StoryComment" id="StoryCommentResult">
+        <result property="commentId" column="comment_id"/>
+        <result property="storyId" column="story_id"/>
+        <result property="content" column="content"/>
+        <result property="author" column="author"/>
+        <result property="authorId" column="author_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="selectStoryCommentList" resultMap="StoryCommentResult">
+        select comment_id, story_id, content, author, author_id, create_time, update_time, is_deleted 
+        from story_comment 
+        where story_id = #{storyId} and is_deleted = 0 
+        order by create_time desc
+    </select>
+    <insert id="insertStoryComment" useGeneratedKeys="true" keyProperty="commentId">
+        insert into story_comment (story_id, content, author, author_id, is_deleted) 
+        values (#{storyId}, #{content}, #{author}, #{authorId}, #{isDeleted})
+    </insert>
+</mapper>

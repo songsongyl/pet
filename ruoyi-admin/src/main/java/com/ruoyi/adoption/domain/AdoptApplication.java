@@ -2,10 +2,12 @@ package com.ruoyi.adoption.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.utils.ChineseBooleanDeserializer;
 
 /**
  * 领养申请对象 adopt_application
@@ -38,18 +40,22 @@ public class AdoptApplication extends BaseEntity
 
     /** 是否允许养宠：0-否，1-是 */
     @Excel(name = "是否允许养宠", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer petAllowed;
 
     /** 是否有封闭阳台/纱窗：0-否，1-是 */
     @Excel(name = "是否有封闭阳台/纱窗", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer hasEnclosedBalcony;
 
     /** 家庭成员是否同意：0-否，1-是 */
     @Excel(name = "家庭成员是否同意", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer familyAgree;
 
     /** 有无过敏情况：0-无，1-有 */
     @Excel(name = "有无过敏情况", readConverterExp = "0=无,1=有")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer hasAllergy;
 
     /** 工作作息 */
@@ -62,18 +68,22 @@ public class AdoptApplication extends BaseEntity
 
     /** 是否了解基础开销：0-否，1-是 */
     @Excel(name = "是否了解基础开销", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer knowBasicCost;
 
     /** 是否能承担医疗费用：0-否，1-是 */
     @Excel(name = "是否能承担医疗费用", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer canAffordMedical;
 
     /** 是否接受科学喂养：0-否，1-是 */
     @Excel(name = "是否接受科学喂养", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer scientificFeeding;
 
     /** 是否同意绝育/牵引：0-否，1-是 */
     @Excel(name = "是否同意绝育/牵引", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer agreeSterilization;
 
     /** 养宠经验 */
@@ -86,10 +96,12 @@ public class AdoptApplication extends BaseEntity
 
     /** 是否承诺不随意弃养：0-否，1-是 */
     @Excel(name = "是否承诺不随意弃养", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer noAbandon;
 
     /** 是否接受回访：0-否，1-是 */
     @Excel(name = "是否接受回访", readConverterExp = "0=否,1=是")
+    @JsonDeserialize(using = ChineseBooleanDeserializer.class)
     private Integer acceptVisit;
 
     /** 申请人姓名 */

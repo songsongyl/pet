@@ -202,7 +202,7 @@ public class AdoptApplicationController extends BaseController
     public AjaxResult batchApprove(@RequestBody Map<String, Object> params)
     {
         @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) params.get("ids");
+        List<Integer> ids = (List<Integer>) params.get("ids");
         String status = (String) params.get("status");
         String remark = (String) params.get("remark");
         
@@ -219,8 +219,8 @@ public class AdoptApplicationController extends BaseController
             return AjaxResult.error("无效的状态");
         }
         
-        for (Long id : ids) {
-            AdoptApplication application = adoptApplicationService.selectAdoptApplicationByApplicationId(id);
+        for (Integer id : ids) {
+            AdoptApplication application = adoptApplicationService.selectAdoptApplicationByApplicationId(id.longValue());
             if (application != null && application.getApplyStatus() == 0) {
                 application.setApplyStatus(statusCode);
                 application.setReviewUserId(getUserId());
