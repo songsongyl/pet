@@ -172,14 +172,14 @@ public class DonationApplicationController extends BaseController
     public AjaxResult batchConfirm(@RequestBody Map<String, Object> params)
     {
         @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) params.get("ids");
+        List<Integer> ids = (List<Integer>) params.get("ids");
         
         if (ids == null || ids.isEmpty()) {
             return AjaxResult.error("请选择要确认的捐赠申请");
         }
         
-        for (Long id : ids) {
-            DonationApplication application = donationApplicationService.selectDonationApplicationByDonationId(id);
+        for (Integer id : ids) {
+            DonationApplication application = donationApplicationService.selectDonationApplicationByDonationId(id.longValue());
             if (application != null && application.getDonationStatus() == 0) {
                 application.setDonationStatus(1); // 已确认
                 application.setConfirmTime(new Date());
@@ -198,15 +198,15 @@ public class DonationApplicationController extends BaseController
     public AjaxResult batchCancel(@RequestBody Map<String, Object> params)
     {
         @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) params.get("ids");
+        List<Integer> ids = (List<Integer>) params.get("ids");
         String remark = (String) params.get("remark");
         
         if (ids == null || ids.isEmpty()) {
             return AjaxResult.error("请选择要取消的捐赠申请");
         }
         
-        for (Long id : ids) {
-            DonationApplication application = donationApplicationService.selectDonationApplicationByDonationId(id);
+        for (Integer id : ids) {
+            DonationApplication application = donationApplicationService.selectDonationApplicationByDonationId(id.longValue());
             if (application != null && application.getDonationStatus() == 0) {
                 application.setDonationStatus(2); // 已取消
                 // 如果需要存储取消备注，可以添加字段，这里暂时不处理
