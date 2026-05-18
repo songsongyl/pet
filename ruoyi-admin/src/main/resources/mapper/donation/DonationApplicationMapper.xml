@@ -29,6 +29,8 @@
         <result property="serviceHours" column="service_hours" />
         <result property="serviceItem" column="service_item" />
         <result property="serviceDate" column="service_date" />
+
+        <!-- 捐助项目 -->
         <result property="projectName" column="project_name" />
     </resultMap>
 
@@ -37,13 +39,9 @@
             donation_id, donor_name, contact_phone, donation_type, donation_method,
             donation_address, shipping_address, donation_time, remarks,
             donation_status, confirm_time, create_time, update_time, is_deleted,
-
-            -- 资金字段
             donation_amount, pay_type, trade_no,
-
-            -- 志愿服务字段
-            service_hours, service_item, service_date
-
+            service_hours, service_item, service_date,
+            project_name
         from donation_application
     </sql>
 
@@ -54,21 +52,11 @@
             <if test="contactPhone != null  and contactPhone != ''"> and contact_phone like concat('%', #{contactPhone}, '%')</if>
             <if test="donationType != null  and donationType != ''"> and donation_type = #{donationType}</if>
             <if test="donationStatus != null "> and donation_status = #{donationStatus}</if>
-
-            <!-- 资金捐赠筛选 -->
             <if test="donationAmount != null "> and donation_amount = #{donationAmount}</if>
             <if test="payType != null and payType != ''"> and pay_type = #{payType}</if>
-
-            <!-- 志愿服务筛选 -->
             <if test="serviceHours != null "> and service_hours = #{serviceHours}</if>
             <if test="serviceItem != null and serviceItem != ''"> and service_item like concat('%', #{serviceItem}, '%')</if>
-
-            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
-            </if>
-            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
-            </if>
+            <if test="projectName != null and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             and is_deleted = 0
         </where>
     </select>
@@ -78,6 +66,7 @@
         where donation_id = #{donationId} and is_deleted = 0
     </select>
 
+    <!-- 恢复成动态插入，为空的字段不插入 -->
     <insert id="insertDonationApplication" parameterType="com.ruoyi.donation.domain.DonationApplication" useGeneratedKeys="true" keyProperty="donationId">
         insert into donation_application
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -104,6 +93,8 @@
             <if test="serviceHours != null">service_hours,</if>
             <if test="serviceItem != null">service_item,</if>
             <if test="serviceDate != null">service_date,</if>
+            <if test="projectName != null">project_name,</if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="donorName != null">#{donorName},</if>
@@ -129,6 +120,7 @@
             <if test="serviceHours != null">#{serviceHours},</if>
             <if test="serviceItem != null">#{serviceItem},</if>
             <if test="serviceDate != null">#{serviceDate},</if>
+            <if test="projectName != null">#{projectName},</if>
         </trim>
     </insert>
 
@@ -158,6 +150,7 @@
             <if test="serviceHours != null">service_hours = #{serviceHours},</if>
             <if test="serviceItem != null">service_item = #{serviceItem},</if>
             <if test="serviceDate != null">service_date = #{serviceDate},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
         </trim>
         where donation_id = #{donationId}
     </update>
