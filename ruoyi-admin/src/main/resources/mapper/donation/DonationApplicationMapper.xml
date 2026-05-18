@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.donation.mapper.DonationApplicationMapper">
 
     <resultMap type="com.ruoyi.donation.domain.DonationApplication" id="DonationApplicationResult">
@@ -19,10 +19,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="isDeleted"    column="is_deleted"    />
+
+        <!-- 资金捐赠字段 -->
+        <result property="donationAmount" column="donation_amount" />
+        <result property="payType" column="pay_type" />
+        <result property="tradeNo" column="trade_no" />
+
+        <!-- 志愿服务字段 -->
+        <result property="serviceHours" column="service_hours" />
+        <result property="serviceItem" column="service_item" />
+        <result property="serviceDate" column="service_date" />
+        <result property="projectName" column="project_name" />
     </resultMap>
 
     <sql id="selectDonationApplicationVo">
-        select donation_id, donor_name, contact_phone, donation_type, donation_method, donation_address, shipping_address, donation_time, remarks, donation_status, confirm_time, create_time, update_time, is_deleted from donation_application
+        select
+            donation_id, donor_name, contact_phone, donation_type, donation_method,
+            donation_address, shipping_address, donation_time, remarks,
+            donation_status, confirm_time, create_time, update_time, is_deleted,
+
+            -- 资金字段
+            donation_amount, pay_type, trade_no,
+
+            -- 志愿服务字段
+            service_hours, service_item, service_date
+
+        from donation_application
     </sql>
 
     <select id="selectDonationApplicationList" parameterType="com.ruoyi.donation.domain.DonationApplication" resultMap="DonationApplicationResult">
@@ -32,6 +54,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contactPhone != null  and contactPhone != ''"> and contact_phone like concat('%', #{contactPhone}, '%')</if>
             <if test="donationType != null  and donationType != ''"> and donation_type = #{donationType}</if>
             <if test="donationStatus != null "> and donation_status = #{donationStatus}</if>
+
+            <!-- 资金捐赠筛选 -->
+            <if test="donationAmount != null "> and donation_amount = #{donationAmount}</if>
+            <if test="payType != null and payType != ''"> and pay_type = #{payType}</if>
+
+            <!-- 志愿服务筛选 -->
+            <if test="serviceHours != null "> and service_hours = #{serviceHours}</if>
+            <if test="serviceItem != null and serviceItem != ''"> and service_item like concat('%', #{serviceItem}, '%')</if>
+
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
                 and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
@@ -63,6 +94,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="isDeleted != null">is_deleted,</if>
+
+            <!-- 资金捐赠 -->
+            <if test="donationAmount != null">donation_amount,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="tradeNo != null">trade_no,</if>
+
+            <!-- 志愿服务 -->
+            <if test="serviceHours != null">service_hours,</if>
+            <if test="serviceItem != null">service_item,</if>
+            <if test="serviceDate != null">service_date,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="donorName != null">#{donorName},</if>
@@ -78,6 +119,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
+
+            <!-- 资金捐赠 -->
+            <if test="donationAmount != null">#{donationAmount},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="tradeNo != null">#{tradeNo},</if>
+
+            <!-- 志愿服务 -->
+            <if test="serviceHours != null">#{serviceHours},</if>
+            <if test="serviceItem != null">#{serviceItem},</if>
+            <if test="serviceDate != null">#{serviceDate},</if>
         </trim>
     </insert>
 
@@ -97,6 +148,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+
+            <!-- 资金捐赠 -->
+            <if test="donationAmount != null">donation_amount = #{donationAmount},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="tradeNo != null">trade_no = #{tradeNo},</if>
+
+            <!-- 志愿服务 -->
+            <if test="serviceHours != null">service_hours = #{serviceHours},</if>
+            <if test="serviceItem != null">service_item = #{serviceItem},</if>
+            <if test="serviceDate != null">service_date = #{serviceDate},</if>
         </trim>
         where donation_id = #{donationId}
     </update>

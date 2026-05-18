@@ -31,7 +31,7 @@ public class DonationApplication extends BaseEntity
 
     /**
      * 捐赠类型：
-     * material = 物资
+     * material = 物品
      * money = 资金
      * volunteer = 志愿服务
      */
@@ -102,7 +102,12 @@ public class DonationApplication extends BaseEntity
     /** 逻辑删除 */
     @Excel(name = "逻辑删除")
     private Integer isDeleted;
+    /** 捐助项目 */
+    @Excel(name = "捐助项目")
+    private String projectName;
 
+    public String getProjectName() { return projectName; }
+    public void setProjectName(String projectName) { this.projectName = projectName; }
     // getter & setter
     public Long getDonationId() {
         return donationId;
