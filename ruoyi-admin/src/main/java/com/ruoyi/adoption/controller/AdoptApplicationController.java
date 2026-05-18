@@ -1,12 +1,21 @@
 package com.ruoyi.adoption.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +32,19 @@ import com.ruoyi.adoption.domain.AdoptApplication;
 import com.ruoyi.adoption.service.IAdoptApplicationService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
-
+import org.springframework.util.StreamUtils;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+//import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StreamUtils;
+import java.io.InputStream;
+import java.io.OutputStream;
+import static com.ruoyi.framework.datasource.DynamicDataSourceContextHolder.log;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 /**
  * 领养申请Controller
  * 
@@ -167,17 +188,113 @@ public class AdoptApplicationController extends BaseController
     /**
      * 下载领养协议模板
      */
+//    @GetMapping("/agreement/download")
+//    public void downloadAgreementTemplate(HttpServletResponse response)
+//    {
+//        // 这里放你的协议文件路径（resources/doc/ 下）
+//        String filePath = "/doc/宠物领养协议.pdf";
+//        InputStream inputStream = null;
+//        OutputStream outputStream = null;
+//
+//        try {
+//            // 从资源目录读取文件
+//            inputStream = this.getClass().getResourceAsStream(filePath);
+//            if (inputStream == null) {
+//                response.setContentType("application/json;charset=utf-8");
+//                response.getWriter().write("{\"code\":500,\"msg\":\"领养协议文件不存在\"}");
+//                return;
+//            }
+//
+//            // 设置下载响应头（前端能识别为Blob文件）
+//            response.setContentType("application/octet-stream");
+//            response.setHeader("Content-Disposition", "attachment;filename="
+//                    + URLEncoder.encode("宠物领养协议.pdf", "UTF-8"));
+//
+//            outputStream = response.getOutputStream();
+//            byte[] buffer = new byte[1024];
+//            int len;
+//            while ((len = inputStream.read(buffer)) != -1) {
+//                outputStream.write(buffer, 0, len);
+//            }
+//            outputStream.flush();
+//        } catch (Exception e) {
+//            log.error("领养协议下载失败", e);
+//        } finally {
+//            // 关闭流
+//            try {
+//                if (inputStream != null) inputStream.close();
+//                if (outputStream != null) outputStream.close();
+//            } catch (IOException e) {
+//                log.error("流关闭失败", e);
+//            }
+//        }
+//
+////        try {
+////            // 这里应该返回领养协议模板文件
+////            // 暂时返回一个简单的文本响应
+////            response.setContentType("application/octet-stream");
+////            response.setHeader("Content-Disposition", "attachment; filename=adoption_agreement_template.pdf");
+////            response.getOutputStream().write("领养协议模板内容".getBytes());
+////        } catch (Exception e) {
+////            throw new RuntimeException("下载失败", e);
+////        }
+//    }
+
+
+
+
+
     @GetMapping("/agreement/download")
-    public void downloadAgreementTemplate(HttpServletResponse response)
-    {
+    public void downloadAgreementTemplate(HttpServletResponse response) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
         try {
-            // 这里应该返回领养协议模板文件
-            // 暂时返回一个简单的文本响应
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename=adoption_agreement_template.pdf");
-            response.getOutputStream().write("领养协议模板内容".getBytes());
+            // 使用 ClassPathResource 更可靠
+            ClassPathResource resource = new ClassPathResource("doc/宠物领养协议.pdf");
+
+            if (!resource.exists()) {
+                log.error("文件不存在: doc/宠物领养协议.pdf");
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write("{\"code\":500,\"msg\":\"领养协议文件不存在\"}");
+                return;
+            }
+
+            // 检查文件大小
+            long contentLength = resource.contentLength();
+            log.info("文件大小: {} bytes", contentLength);
+
+            if (contentLength == 0) {
+                log.error("文件内容为空");
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write("{\"code\":500,\"msg\":\"领养协议文件内容为空\"}");
+                return;
+            }
+
+            // 设置响应头
+            response.setContentType("application/pdf");
+            response.setContentLength((int) contentLength);
+            response.setHeader("Content-Disposition", "attachment;filename="
+                    + URLEncoder.encode("宠物领养协议.pdf", "UTF-8"));
+
+            // 使用 StreamUtils.copy 复制流
+            inputStream = resource.getInputStream();
+            outputStream = response.getOutputStream();
+            StreamUtils.copy(inputStream, outputStream);
+            outputStream.flush();
+
+            log.info("文件下载成功，大小: {} bytes", contentLength);
+
         } catch (Exception e) {
-            throw new RuntimeException("下载失败", e);
+            log.error("领养协议下载失败", e);
+        } finally {
+            // 关闭流
+            try {
+                if (inputStream != null) inputStream.close();
+                if (outputStream != null) outputStream.close();
+            } catch (IOException e) {
+                log.error("流关闭失败", e);
+            }
         }
     }
 

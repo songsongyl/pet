@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.pet.mapper.PetInfoMapper">
-    
-    <resultMap type="PetInfo" id="PetInfoResult">
+
+    <resultMap type="com.ruoyi.pet.domain.PetInfo" id="PetInfoResult">
         <result property="petId"    column="pet_id"    />
-        <result property="petCode"    column="pet_code"    />
+        <result property="mediaUrl"    column="media_url"    />
         <result property="petName"    column="pet_name"    />
         <result property="petType"    column="pet_type"    />
         <result property="breed"    column="breed"    />
@@ -29,41 +29,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPetInfoVo">
-        select pet_id, pet_code, pet_name, pet_type, breed, age, gender, health_status, sterilization, vaccine_status, chip_no, found_place, found_time, pet_desc, pet_status, publisher_id, publisher_type, org_id, create_time, update_time, is_deleted from pet_info
+        select pet_id, media_url, pet_name, pet_type, breed, age, gender, health_status, sterilization, vaccine_status, chip_no, found_place, found_time, pet_desc, pet_status, publisher_id, publisher_type, org_id, create_time, update_time, is_deleted from pet_info
     </sql>
 
     <select id="selectPetInfoList" parameterType="PetInfo" resultMap="PetInfoResult">
         <include refid="selectPetInfoVo"/>
-        <where>  
-            <if test="petCode != null  and petCode != ''"> and pet_code = #{petCode}</if>
-            <if test="petName != null  and petName != ''"> and pet_name like concat('%', #{petName}, '%')</if>
+        <where>
             <if test="petType != null "> and pet_type = #{petType}</if>
-            <if test="breed != null  and breed != ''"> and breed = #{breed}</if>
-            <if test="age != null  and age != ''"> and age = #{age}</if>
+            <if test="breed != null  and breed != ''"> and breed like concat('%', #{breed}, '%')</if>
+            <if test="age != null "> and age = #{age}</if>
             <if test="gender != null "> and gender = #{gender}</if>
             <if test="healthStatus != null "> and health_status = #{healthStatus}</if>
             <if test="sterilization != null "> and sterilization = #{sterilization}</if>
             <if test="vaccineStatus != null "> and vaccine_status = #{vaccineStatus}</if>
-            <if test="foundPlace != null  and foundPlace != ''"> and found_place = #{foundPlace}</if>
+            <if test="foundPlace != null  and foundPlace != ''"> and found_place like concat('%', #{foundPlace}, '%')</if>
             <if test="foundTime != null "> and found_time = #{foundTime}</if>
-            <if test="petDesc != null  and petDesc != ''"> and pet_desc = #{petDesc}</if>
+            <if test="petDesc != null  and petDesc != ''"> and pet_desc like concat('%', #{petDesc}, '%')</if>
             <if test="petStatus != null "> and pet_status = #{petStatus}</if>
             <if test="publisherId != null "> and publisher_id = #{publisherId}</if>
             <if test="publisherType != null "> and publisher_type = #{publisherType}</if>
             <if test="orgId != null "> and org_id = #{orgId}</if>
-            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            and is_deleted = 0
         </where>
     </select>
-    
+
     <select id="selectPetInfoByPetId" parameterType="Long" resultMap="PetInfoResult">
         <include refid="selectPetInfoVo"/>
-        where pet_id = #{petId}
+        where pet_id = #{petId} and is_deleted = 0
     </select>
 
     <insert id="insertPetInfo" parameterType="PetInfo" useGeneratedKeys="true" keyProperty="petId">
         insert into pet_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="petCode != null and petCode != ''">pet_code,</if>
+            <if test="mediaUrl != null">media_url,</if>
             <if test="petName != null and petName != ''">pet_name,</if>
             <if test="petType != null">pet_type,</if>
             <if test="breed != null">breed,</if>
@@ -83,9 +81,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="isDeleted != null">is_deleted,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="petCode != null and petCode != ''">#{petCode},</if>
+            <if test="mediaUrl != null">#{mediaUrl},</if>
             <if test="petName != null and petName != ''">#{petName},</if>
             <if test="petType != null">#{petType},</if>
             <if test="breed != null">#{breed},</if>
@@ -105,13 +103,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updatePetInfo" parameterType="PetInfo">
         update pet_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test="petCode != null and petCode != ''">pet_code = #{petCode},</if>
+            <if test="mediaUrl != null">media_url = #{mediaUrl},</if>
             <if test="petName != null and petName != ''">pet_name = #{petName},</if>
             <if test="petType != null">pet_type = #{petType},</if>
             <if test="breed != null">breed = #{breed},</if>
@@ -135,14 +133,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where pet_id = #{petId}
     </update>
 
-    <delete id="deletePetInfoByPetId" parameterType="Long">
-        delete from pet_info where pet_id = #{petId}
-    </delete>
+    <!-- 逻辑删除 替换物理删除 -->
+    <update id="deletePetInfoByPetId" parameterType="Long">
+        update pet_info set is_deleted = 1 where pet_id = #{petId}
+    </update>
 
-    <delete id="deletePetInfoByPetIds" parameterType="String">
-        delete from pet_info where pet_id in 
+    <update id="deletePetInfoByPetIds" parameterType="String">
+        update pet_info set is_deleted = 1 where pet_id in
         <foreach item="petId" collection="array" open="(" separator="," close=")">
             #{petId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

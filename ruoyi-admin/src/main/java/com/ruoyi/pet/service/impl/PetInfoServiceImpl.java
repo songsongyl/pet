@@ -53,6 +53,7 @@ public class PetInfoServiceImpl implements IPetInfoService
     @Override
     public int insertPetInfo(PetInfo petInfo)
     {
+        System.out.println("轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩"+petInfo.getMediaUrl());
         petInfo.setCreateTime(DateUtils.getNowDate());
         return petInfoMapper.insertPetInfo(petInfo);
     }

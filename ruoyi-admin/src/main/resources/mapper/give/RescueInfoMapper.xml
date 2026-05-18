@@ -7,7 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="RescueInfo" id="RescueInfoResult">
         <result property="rescueId"    column="rescue_id"    />
         <result property="petId"    column="pet_id"    />
-        <result property="rescueTitle"    column="rescue_title"    />
+
         <result property="rescueStatus"    column="rescue_status"    />
         <result property="urgentLevel"    column="urgent_level"    />
         <result property="needType"    column="need_type"    />
@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRescueInfoVo">
-        select r.rescue_id, r.pet_id, r.rescue_title, r.rescue_status, r.urgent_level, r.need_type, r.need_desc, r.target_amount, r.raised_amount, r.start_time, r.end_time, r.verify_status, r.verify_user_id, r.verify_remark, p.found_place, r.create_time, r.update_time, r.is_deleted 
+        select r.rescue_id, r.pet_id, r.rescue_status, r.urgent_level, r.need_type, r.need_desc, r.target_amount, r.raised_amount, r.start_time, r.end_time, r.verify_status, r.verify_user_id, r.verify_remark, p.found_place, r.create_time, r.update_time, r.is_deleted
         from rescue_info r
         left join pet_info p on r.pet_id = p.pet_id
     </sql>
@@ -35,7 +35,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectRescueInfoVo"/>
         <where>  
             <if test="petId != null "> and pet_id = #{petId}</if>
-            <if test="rescueTitle != null  and rescueTitle != ''"> and rescue_title = #{rescueTitle}</if>
             <if test="rescueStatus != null "> and rescue_status = #{rescueStatus}</if>
             <if test="urgentLevel != null "> and urgent_level = #{urgentLevel}</if>
             <if test="needType != null  and needType != ''"> and need_type = #{needType}</if>
@@ -60,7 +59,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into rescue_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="petId != null">pet_id,</if>
-            <if test="rescueTitle != null">rescue_title,</if>
             <if test="rescueStatus != null">rescue_status,</if>
             <if test="urgentLevel != null">urgent_level,</if>
             <if test="needType != null">need_type,</if>
@@ -78,7 +76,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="petId != null">#{petId},</if>
-            <if test="rescueTitle != null">#{rescueTitle},</if>
             <if test="rescueStatus != null">#{rescueStatus},</if>
             <if test="urgentLevel != null">#{urgentLevel},</if>
             <if test="needType != null">#{needType},</if>
@@ -100,7 +97,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update rescue_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="petId != null">pet_id = #{petId},</if>
-            <if test="rescueTitle != null and rescueTitle != ''">rescue_title = #{rescueTitle},</if>
             <if test="rescueStatus != null">rescue_status = #{rescueStatus},</if>
             <if test="urgentLevel != null">urgent_level = #{urgentLevel},</if>
             <if test="needType != null and needType != ''">need_type = #{needType},</if>

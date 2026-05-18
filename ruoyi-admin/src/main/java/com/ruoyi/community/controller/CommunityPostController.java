@@ -127,15 +127,7 @@ public class CommunityPostController extends BaseController
         return toAjax(communityPostService.updateCommunityPost(post));
     }
 
-    /**
-     * 评论帖子
-     */
-    @PostMapping("/{postId}/comment")
-    public AjaxResult comment(@PathVariable Long postId, @RequestBody CommunityPost communityPost)
-    {
-        // 这里应该调用评论服务，暂时返回成功
-        return AjaxResult.success("评论成功");
-    }
+
 
     /**
      * 获取帖子评论列表
@@ -147,23 +139,48 @@ public class CommunityPostController extends BaseController
         return AjaxResult.success(new java.util.ArrayList<>());
     }
 
+
+
     /**
-     * 收藏帖子
+     * 浏览帖子（浏览次数 +1，持久化）
      */
-    @PostMapping("/{postId}/collect")
-    public AjaxResult collect(@PathVariable Long postId)
-    {
-        // 这里应该调用收藏服务，暂时返回成功
-        return AjaxResult.success("收藏成功");
+    @PutMapping("/{postId}/view")
+    public AjaxResult addViewCount(@PathVariable Long postId) {
+        CommunityPost post = communityPostService.selectCommunityPostByPostId(postId);
+        if (post == null) {
+            return AjaxResult.error("帖子不存在");
+        }
+        post.setViewCount(post.getViewCount() == null ? 1 : post.getViewCount() + 1);
+        communityPostService.updateCommunityPost(post);
+        return AjaxResult.success("浏览次数更新成功", post.getViewCount());
     }
 
     /**
-     * 获取收藏列表
+     * 收藏帖子（收藏次数 +1，持久化）
      */
-    @GetMapping("/collection/list")
-    public AjaxResult getCollectionList()
-    {
-        // 这里应该调用收藏服务，暂时返回空列表
-        return AjaxResult.success(new java.util.ArrayList<>());
+    @PutMapping("/{postId}/collect")
+    public AjaxResult addCollectCount(@PathVariable Long postId) {
+        CommunityPost post = communityPostService.selectCommunityPostByPostId(postId);
+        if (post == null) {
+            return AjaxResult.error("帖子不存在");
+        }
+        post.setCollectCount(post.getCollectCount() == null ? 1 : post.getCollectCount() + 1);
+        communityPostService.updateCommunityPost(post);
+        return AjaxResult.success("收藏次数更新成功", post.getCollectCount());
     }
+
+    /**
+     * 评论帖子（评论次数 +1，持久化）
+     */
+    @PutMapping("/{postId}/comment")
+    public AjaxResult addCommentCount(@PathVariable Long postId) {
+        CommunityPost post = communityPostService.selectCommunityPostByPostId(postId);
+        if (post == null) {
+            return AjaxResult.error("帖子不存在");
+        }
+        post.setCommentCount(post.getCommentCount() == null ? 1 : post.getCommentCount() + 1);
+        communityPostService.updateCommunityPost(post);
+        return AjaxResult.success("评论次数更新成功", post.getCommentCount());
+    }
+
 }

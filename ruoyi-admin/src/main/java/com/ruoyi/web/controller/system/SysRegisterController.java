@@ -13,7 +13,7 @@ import com.ruoyi.system.service.ISysConfigService;
 
 /**
  * 注册验证
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -28,11 +28,16 @@ public class SysRegisterController extends BaseController
     @PostMapping("/register")
     public AjaxResult register(@RequestBody RegisterBody user)
     {
-        if (!("true".equals(configService.selectConfigByKey("sys.account.registerUser"))))
+        // 1. 判断系统是否开启用户注册功能
+        if (!"true".equals(configService.selectConfigByKey("sys.account.registerUser")))
         {
             return error("当前系统没有开启注册功能！");
         }
+
+        // 2. 执行注册逻辑
         String msg = registerService.register(user);
-        return StringUtils.isEmpty(msg) ? success() : error(msg);
+
+        // 3. 注册成功返回success，失败返回错误信息
+        return StringUtils.isEmpty(msg) ? success("注册成功") : error(msg);
     }
 }

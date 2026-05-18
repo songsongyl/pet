@@ -141,40 +141,40 @@ public class StoryController extends BaseController
         }
     }
 
-    /**
-     * 评论故事
-     */
-    @PostMapping("/{storyId}/comment")
-    public AjaxResult comment(@PathVariable String storyId, @RequestBody Map<String, Object> commentData)
-    {
-        if (storyId == null || storyId.trim().isEmpty() || "undefined".equals(storyId)) {
-            return AjaxResult.error("故事ID不能为空");
-        }
-        try {
-            Long id = Long.parseLong(storyId);
-            String content = (String) commentData.get("content");
-            if (content == null || content.trim().isEmpty()) {
-                return AjaxResult.error("评论内容不能为空");
-            }
-            
-            StoryComment storyComment = new StoryComment();
-            storyComment.setStoryId(id);
-            storyComment.setContent(content);
-            storyComment.setAuthorId(getUserId());
-            // 这里可以根据用户ID获取用户名，暂时设为空
-            storyComment.setAuthor("");
-            storyComment.setIsDeleted(0);
-            
-            int result = storyCommentService.insertStoryComment(storyComment);
-            if (result > 0) {
-                return AjaxResult.success("评论成功");
-            } else {
-                return AjaxResult.error("评论失败");
-            }
-        } catch (NumberFormatException e) {
-            return AjaxResult.error("故事ID必须为数字");
-        }
-    }
+//    /**
+//     * 评论故事
+//     */
+//    @PostMapping("/{storyId}/comment")
+//    public AjaxResult comment(@PathVariable String storyId, @RequestBody Map<String, Object> commentData)
+//    {
+//        if (storyId == null || storyId.trim().isEmpty() || "undefined".equals(storyId)) {
+//            return AjaxResult.error("故事ID不能为空");
+//        }
+//        try {
+//            Long id = Long.parseLong(storyId);
+//            String content = (String) commentData.get("content");
+//            if (content == null || content.trim().isEmpty()) {
+//                return AjaxResult.error("评论内容不能为空");
+//            }
+//
+//            StoryComment storyComment = new StoryComment();
+//            storyComment.setStoryId(id);
+//            storyComment.setContent(content);
+//            storyComment.setAuthorId(getUserId());
+//            // 这里可以根据用户ID获取用户名，暂时设为空
+//            storyComment.setAuthor("");
+//            storyComment.setIsDeleted(0);
+//
+//            int result = storyCommentService.insertStoryComment(storyComment);
+//            if (result > 0) {
+//                return AjaxResult.success("评论成功");
+//            } else {
+//                return AjaxResult.error("评论失败");
+//            }
+//        } catch (NumberFormatException e) {
+//            return AjaxResult.error("故事ID必须为数字");
+//        }
+//    }
 
     /**
      * 获取故事评论列表
@@ -191,6 +191,59 @@ public class StoryController extends BaseController
             storyComment.setStoryId(id);
             List<StoryComment> comments = storyCommentService.selectStoryCommentList(storyComment);
             return AjaxResult.success(comments);
+        } catch (NumberFormatException e) {
+            return AjaxResult.error("故事ID必须为数字");
+        }
+    }
+    /**
+     * 浏览故事（浏览次数+1，持久化到数据库）
+     */
+    @PutMapping("/{storyId}/view")
+    public AjaxResult addViewCount(@PathVariable Long storyId) {
+        Story story = storyService.selectStoryByStoryId(storyId);
+        if (story == null) {
+            return AjaxResult.error("故事不存在");
+        }
+        // 为空则设为1，否则+1
+        story.setViewCount(story.getViewCount() == null ? 1 : story.getViewCount() + 1);
+        storyService.updateStory(story);
+        return AjaxResult.success("浏览次数更新成功", story.getViewCount());
+    }
+
+    /**
+     * 评论故事（自动更新评论次数）
+     */
+    @PostMapping("/{storyId}/comment")
+    public AjaxResult comment(@PathVariable String storyId, @RequestBody Map<String, Object> commentData)
+    {
+        if (storyId == null || storyId.trim().isEmpty() || "undefined".equals(storyId)) {
+            return AjaxResult.error("故事ID不能为空");
+        }
+        try {
+            Long id = Long.parseLong(storyId);
+            String content = (String) commentData.get("content");
+            if (content == null || content.trim().isEmpty()) {
+                return AjaxResult.error("评论内容不能为空");
+            }
+
+            StoryComment storyComment = new StoryComment();
+            storyComment.setStoryId(id);
+            storyComment.setContent(content);
+            storyComment.setAuthorId(getUserId());
+            storyComment.setAuthor("");
+            storyComment.setIsDeleted(0);
+
+            int result = storyCommentService.insertStoryComment(storyComment);
+            if (result > 0) {
+                // ===================== 【新增】评论成功后自动+1 =====================
+                Story story = storyService.selectStoryByStoryId(id);
+                story.setCommentCount(story.getCommentCount() == null ? 1 : story.getCommentCount() + 1);
+                storyService.updateStory(story);
+
+                return AjaxResult.success("评论成功");
+            } else {
+                return AjaxResult.error("评论失败");
+            }
         } catch (NumberFormatException e) {
             return AjaxResult.error("故事ID必须为数字");
         }

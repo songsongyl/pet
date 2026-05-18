@@ -25,9 +25,7 @@ public class RescueInfo extends BaseEntity
     @Excel(name = "宠物ID")
     private Long petId;
 
-    /** 救助标题 */
-    @Excel(name = "救助标题")
-    private String rescueTitle;
+
 
     /** 救助状态 */
     @Excel(name = "救助状态")
@@ -127,15 +125,7 @@ public class RescueInfo extends BaseEntity
         return petId;
     }
 
-    public void setRescueTitle(String rescueTitle) 
-    {
-        this.rescueTitle = rescueTitle;
-    }
 
-    public String getRescueTitle() 
-    {
-        return rescueTitle;
-    }
 
     public void setRescueStatus(Integer rescueStatus) 
     {
@@ -262,7 +252,6 @@ public class RescueInfo extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("rescueId", getRescueId())
             .append("petId", getPetId())
-            .append("rescueTitle", getRescueTitle())
             .append("rescueStatus", getRescueStatus())
             .append("urgentLevel", getUrgentLevel())
             .append("needType", getNeedType())

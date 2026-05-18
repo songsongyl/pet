@@ -101,4 +101,18 @@ public class NoticeInfoController extends BaseController
     {
         return toAjax(noticeInfoService.deleteNoticeInfoByNoticeIds(noticeIds));
     }
+    /**
+     * 更新公告浏览次数
+     */
+    @PutMapping("/{noticeId}/view")
+    public AjaxResult updateViewCount(@PathVariable Long noticeId) {
+        NoticeInfo notice = noticeInfoService.selectNoticeInfoByNoticeId(noticeId);
+        if (notice == null) {
+            return AjaxResult.error("公告不存在");
+        }
+        // 为空则设为1，否则+1
+        notice.setViewCount(notice.getViewCount() == null ? 1 : notice.getViewCount() + 1);
+        noticeInfoService.updateNoticeInfo(notice);
+        return AjaxResult.success("浏览次数更新成功", notice.getViewCount());
+    }
 }

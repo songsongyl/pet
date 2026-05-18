@@ -101,4 +101,39 @@ public class KnowledgeCourseController extends BaseController
     {
         return toAjax(knowledgeCourseService.deleteKnowledgeCourseByCourseIds(courseIds));
     }
+
+    /**
+     * 更新课程浏览次数（+1）
+     */
+    @PreAuthorize("@ss.hasPermi('course:course:edit')")
+    @Log(title = "知识课堂", businessType = BusinessType.UPDATE)
+    @PutMapping("/{courseId}/view")
+    public AjaxResult updateViewCount(@PathVariable Long courseId) {
+        KnowledgeCourse course = knowledgeCourseService.selectKnowledgeCourseByCourseId(courseId);
+        if (course == null) {
+            return AjaxResult.error("课程不存在");
+        }
+        // 浏览次数 +1
+        course.setViewCount(course.getViewCount() + 1);
+        knowledgeCourseService.updateKnowledgeCourse(course);
+        return AjaxResult.success("更新浏览次数成功");
+    }
+
+    /**
+     * 更新课程收藏次数（+1）
+     */
+    @PreAuthorize("@ss.hasPermi('course:course:edit')")
+    @Log(title = "知识课堂", businessType = BusinessType.UPDATE)
+    @PutMapping("/{courseId}/collect")
+    public AjaxResult updateCollectCount(@PathVariable Long courseId) {
+        KnowledgeCourse course = knowledgeCourseService.selectKnowledgeCourseByCourseId(courseId);
+        if (course == null) {
+            return AjaxResult.error("课程不存在");
+        }
+        // 收藏次数 +1
+        course.setCollectCount(course.getCollectCount() + 1);
+        knowledgeCourseService.updateKnowledgeCourse(course);
+        return AjaxResult.success("更新收藏次数成功");
+    }
+
 }

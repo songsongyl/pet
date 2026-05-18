@@ -80,6 +80,12 @@ public class SysRegisterService
             sysUser.setPwdUpdateDate(DateUtils.getNowDate());
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
             boolean regFlag = userService.registerUser(sysUser);
+            SysUser userp = userService.selectUserByUserName(sysUser.getUserName());
+            // 数组内放100L
+            Long[] targetRoles = {100L};
+            targetRoles[0] = 100L;
+            // 设置部门权限 userId + 100L
+            userService.insertUserAuth(userp.getUserId(),targetRoles);
             if (!regFlag)
             {
                 msg = "注册失败,请联系系统管理人员";
