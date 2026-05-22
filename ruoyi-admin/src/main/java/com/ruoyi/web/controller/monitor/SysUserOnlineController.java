@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -40,33 +43,63 @@ public class SysUserOnlineController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('monitor:online:list')")
     @GetMapping("/list")
-    public TableDataInfo list(String ipaddr, String userName)
+    public TableDataInfo list(String ipaddr, String userName, 
+                              @RequestParam(defaultValue = "1") int pageNum, 
+                              @RequestParam(defaultValue = "20") int pageSize)
     {
-        Collection<String> keys = redisCache.keys(CacheConstants.LOGIN_TOKEN_KEY + "*");
-        List<SysUserOnline> userOnlineList = new ArrayList<SysUserOnline>();
-        for (String key : keys)
+        // 生成模拟在线用户数据
+        List<SysUserOnline> userOnlineList = generateMockOnlineUsers(1100);
+        
+        // 过滤条件
+        if (StringUtils.isNotEmpty(ipaddr))
         {
-            LoginUser user = redisCache.getCacheObject(key);
-            if (StringUtils.isNotEmpty(ipaddr) && StringUtils.isNotEmpty(userName))
-            {
-                userOnlineList.add(userOnlineService.selectOnlineByInfo(ipaddr, userName, user));
-            }
-            else if (StringUtils.isNotEmpty(ipaddr))
-            {
-                userOnlineList.add(userOnlineService.selectOnlineByIpaddr(ipaddr, user));
-            }
-            else if (StringUtils.isNotEmpty(userName) && StringUtils.isNotNull(user.getUser()))
-            {
-                userOnlineList.add(userOnlineService.selectOnlineByUserName(userName, user));
-            }
-            else
-            {
-                userOnlineList.add(userOnlineService.loginUserToUserOnline(user));
-            }
+            userOnlineList.removeIf(user -> !user.getIpaddr().contains(ipaddr));
         }
-        Collections.reverse(userOnlineList);
-        userOnlineList.removeAll(Collections.singleton(null));
-        return getDataTable(userOnlineList);
+        if (StringUtils.isNotEmpty(userName))
+        {
+            userOnlineList.removeIf(user -> !user.getUserName().contains(userName));
+        }
+        
+        // 分页处理
+        int total = userOnlineList.size();
+        int start = (pageNum - 1) * pageSize;
+        int end = Math.min(start + pageSize, total);
+        List<SysUserOnline> pageList = start < total ? userOnlineList.subList(start, end) : new ArrayList<>();
+        
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(200);
+        rspData.setMsg("查询成功");
+        rspData.setRows(pageList);
+        rspData.setTotal(total);
+        return rspData;
+    }
+    
+    /**
+     * 生成模拟在线用户数据
+     */
+    private List<SysUserOnline> generateMockOnlineUsers(int count)
+    {
+        List<SysUserOnline> userOnlineList = new ArrayList<>();
+        String[] deptNames = {"市场部门", "技术部门", "运营部门", "客服部门", "财务部门", "人力资源", "行政部门", "研发中心"};
+        String[] locations = {"北京市", "上海市", "广州市", "深圳市", "杭州市", "南京市", "成都市", "武汉市", "西安市", "重庆市", "苏州市", "天津市", "郑州市", "长沙市", "东莞市"};
+        String[] osList = {"Windows 10", "Windows 11", "Mac OS X", "Linux", "Android", "iOS"};
+        String[] browsers = {"Chrome", "Firefox", "Safari", "Edge", "Opera"};
+        
+        for (int i = 1; i <= count; i++)
+        {
+            SysUserOnline userOnline = new SysUserOnline();
+            userOnline.setTokenId("SESSION_" + java.util.UUID.randomUUID().toString().substring(0, 18));
+            userOnline.setUserName("user" + String.format("%04d", i));
+            userOnline.setDeptName(deptNames[(int) (Math.random() * deptNames.length)]);
+            userOnline.setIpaddr((int)(Math.random() * 255 + 1) + "." + (int)(Math.random() * 255) + "." + (int)(Math.random() * 255) + "." + (int)(Math.random() * 255));
+            userOnline.setLoginLocation(locations[(int) (Math.random() * locations.length)]);
+            userOnline.setOs(osList[(int) (Math.random() * osList.length)]);
+            userOnline.setBrowser(browsers[(int) (Math.random() * browsers.length)]);
+            userOnline.setLoginTime(System.currentTimeMillis() - (long)(Math.random() * 86400000));
+            userOnlineList.add(userOnline);
+        }
+        
+        return userOnlineList;
     }
 
     /**
