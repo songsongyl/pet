@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ComplaintReport.mapper.BlacklistMapper">
+
+    <resultMap type="Blacklist" id="BlacklistResult">
+        <result property="blacklistId"    column="blacklist_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="userNickName"    column="user_nick_name"    />
+        <result property="blacklistType"    column="blacklist_type"    />
+        <result property="reason"    column="reason"    />
+        <result property="relatedComplaintId"    column="related_complaint_id"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="unblockTime"    column="unblock_time"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBlacklistVo">
+        select blacklist_id, user_id, user_name, user_nick_name, blacklist_type, reason, related_complaint_id, operator_id, operator_name, unblock_time, status, create_by, create_time, update_by, update_time, remark from blacklist
+    </sql>
+
+    <select id="selectBlacklistList" parameterType="Blacklist" resultMap="BlacklistResult">
+        <include refid="selectBlacklistVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="userNickName != null and userNickName != ''"> and user_nick_name like concat('%', #{userNickName}, '%')</if>
+            <if test="blacklistType != null "> and blacklist_type = #{blacklistType}</if>
+            <if test="reason != null and reason != ''"> and reason = #{reason}</if>
+            <if test="relatedComplaintId != null "> and related_complaint_id = #{relatedComplaintId}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+            <if test="status != null and status != ''"> and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectBlacklistByBlacklistId" parameterType="Long" resultMap="BlacklistResult">
+        <include refid="selectBlacklistVo"/>
+        where blacklist_id = #{blacklistId}
+    </select>
+
+    <select id="selectBlacklistByUserId" parameterType="Long" resultMap="BlacklistResult">
+        <include refid="selectBlacklistVo"/>
+        where user_id = #{userId} and status = '0'
+    </select>
+
+    <insert id="insertBlacklist" parameterType="Blacklist" useGeneratedKeys="true" keyProperty="blacklistId">
+        insert into blacklist
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="userNickName != null">user_nick_name,</if>
+            <if test="blacklistType != null">blacklist_type,</if>
+            <if test="reason != null and reason != ''">reason,</if>
+            <if test="relatedComplaintId != null">related_complaint_id,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="operatorName != null">operator_name,</if>
+            <if test="unblockTime != null">unblock_time,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="userNickName != null">#{userNickName},</if>
+            <if test="blacklistType != null">#{blacklistType},</if>
+            <if test="reason != null and reason != ''">#{reason},</if>
+            <if test="relatedComplaintId != null">#{relatedComplaintId},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="operatorName != null">#{operatorName},</if>
+            <if test="unblockTime != null">#{unblockTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBlacklist" parameterType="Blacklist">
+        update blacklist
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="userNickName != null">user_nick_name = #{userNickName},</if>
+            <if test="blacklistType != null">blacklist_type = #{blacklistType},</if>
+            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="relatedComplaintId != null">related_complaint_id = #{relatedComplaintId},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="operatorName != null">operator_name = #{operatorName},</if>
+            <if test="unblockTime != null">unblock_time = #{unblockTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where blacklist_id = #{blacklistId}
+    </update>
+
+    <delete id="deleteBlacklistByBlacklistId" parameterType="Long">
+        delete from blacklist where blacklist_id = #{blacklistId}
+    </delete>
+
+    <delete id="deleteBlacklistByBlacklistIds" parameterType="String">
+        delete from blacklist where blacklist_id in
+        <foreach item="blacklistId" collection="array" open="(" separator="," close=")">
+            #{blacklistId}
+        </foreach>
+    </delete>
+
+    <update id="updateBlacklistStatusByBlacklistIds" parameterType="String">
+        update blacklist set status = '1', update_time = sysdate() where blacklist_id in
+        <foreach item="blacklistId" collection="array" open="(" separator="," close=")">
+            #{blacklistId}
+        </foreach>
+    </update>
+
+</mapper>
