@@ -29,6 +29,8 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.adoption.domain.AdoptApplication;
+import com.ruoyi.adoption.domain.PetRecommendationRequest;
+import com.ruoyi.adoption.domain.PetRecommendationResult;
 import com.ruoyi.adoption.service.IAdoptApplicationService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -47,7 +49,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 /**
  * 领养申请Controller
- * 
+ *
  * @author ruoyi
  * @date 2026-04-04
  */
@@ -156,7 +158,7 @@ public class AdoptApplicationController extends BaseController
         }
         String status = (String) params.get("status");
         String remark = (String) params.get("remark");
-        
+
         if ("approved".equals(status)) {
             application.setApplyStatus(1); // 审核通过
         } else if ("rejected".equals(status)) {
@@ -164,7 +166,7 @@ public class AdoptApplicationController extends BaseController
         } else {
             return AjaxResult.error("无效的状态");
         }
-        
+
         application.setReviewUserId(getUserId());
         application.setReviewRemark(remark);
         application.setReviewTime(new Date());
@@ -322,11 +324,11 @@ public class AdoptApplicationController extends BaseController
         List<Integer> ids = (List<Integer>) params.get("ids");
         String status = (String) params.get("status");
         String remark = (String) params.get("remark");
-        
+
         if (ids == null || ids.isEmpty()) {
             return AjaxResult.error("请选择要审批的申请");
         }
-        
+
         Integer statusCode;
         if ("approved".equals(status)) {
             statusCode = 1; // 审核通过
@@ -335,7 +337,7 @@ public class AdoptApplicationController extends BaseController
         } else {
             return AjaxResult.error("无效的状态");
         }
-        
+
         for (Integer id : ids) {
             AdoptApplication application = adoptApplicationService.selectAdoptApplicationByApplicationId(id.longValue());
             if (application != null && application.getApplyStatus() == 0) {
@@ -346,7 +348,20 @@ public class AdoptApplicationController extends BaseController
                 adoptApplicationService.updateAdoptApplication(application);
             }
         }
-        
+
         return AjaxResult.success("批量审批成功");
+    }
+
+    /**
+     * 根据用户偏好推荐宠物
+     *
+     * @param request 推荐请求（包含用户偏好）
+     * @return 推荐的宠物列表（按匹配度降序）
+     */
+    @GetMapping("/recommend")
+    public AjaxResult recommendPets(PetRecommendationRequest request)
+    {
+        List<PetRecommendationResult> results = adoptApplicationService.recommendPets(request);
+        return AjaxResult.success("获取推荐成功", results);
     }
 }
